@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./message";
+
+package message;
+
+service AssetsService {
+    // 资产汇总面板
+    rpc GetAssetsOverview (AssetsRequest) returns (AssetsOverviewReply) {}
+    // 查询资产列表
+    rpc GetAssetsList (AssetsRequest) returns (ListReply) {}    
+    // 查询资产详情
+    rpc GetAssetsDetail (AssetsRequest) returns (AssetsDetailReply) {}    
+    // 拉取应用信息,创建资产
+    rpc CreateAssets (AssetsRequest) returns (ResultReply) {}
+    // 操作资产
+    rpc OpterateAssets (AssetsRequest) returns (ResultReply) {}     
+    // 查询资产历史配置文件列表
+    rpc GetAssetsConfList (AssetsRequest) returns (ListReply) {}
+    // 应用选中配置文件
+    rpc UseCurrConfForAssets (AssetsRequest) returns (ResultReply) {}
+    
+    // 应用相关
+    rpc GetAppList (ApplicationRequest) returns (ListReply) {}
+    rpc GetAppDetail (ApplicationRequest) returns (ApplicationDetailReply) {}
+}
+
+message ApplicationRequest {
+    Page page = 1;
+    
+    int32 app_id = 2;
+    int32 app_type = 3;
+}
+
+// 通用资产请求参数
+message AssetsRequest {
+    // 用户信息段
+    string uid = 1;
+    string account = 2;
+    
+    // 资产操作相关参数
+    string assets_id = 3;
+    string assets_type = 4;
+    int32 application_id = 5;
+    string opt_type = 6;
+    // map<string,string> opt_conf = 7;
+    string opt_conf = 7;
+
+    Page page = 8;
+}
+
+// 资产信息汇总面板,展示每种资源持有量
+message AssetsOverviewReply {    
+    map<string,int32> items = 1;
+}
+
+// 资产列表
+message AssetsListReply {
+    string id = 1;
+    string owner = 2;
+    string app_title = 3;
+    string app_type = 4;
+    string desc = 5;
+    string version = 6;
+    int32 status = 10;
+    google.protobuf.Timestamp create_time = 11;
+    int32 node = 12;
+    repeated OpterateSimpleConf opt_list = 13;
+}
+
+// 资产详情
+message AssetsDetailReply {
+    string id = 1;
+    string owner = 2;
+    string app_title = 3;
+    string app_type = 4;
+    string desc = 5;
+    string version = 6;
+    string public_url = 7;
+    string private_url = 8;
+    string health_url = 9;
+    int32 status = 10;
+    google.protobuf.Timestamp create_time = 11;    
+    string create_user = 12;
+    google.protobuf.Timestamp update_time = 13;    
+    string update_user = 14;
+
+    repeated AssetsNode nodes = 15;
+    repeated OpterateSimpleConf opt_list = 16;
+}
+
+// 资产节点信息
+message AssetsNode {
+    string id = 1;
+    string node = 2;
+    string node_name = 3;
+    string node_type = 4;
+    string cpu_limit = 5;
+    string mem_limit = 6;
+    string disk_limit = 7;
+    int32 health = 8;
+    string host = 9;
+    google.protobuf.Timestamp create_time = 11;    
+    string create_user = 12;
+    google.protobuf.Timestamp update_time = 13;    
+    string update_user = 14;
+}
+
+// 详情列表操作列表简要信息
+message OpterateSimpleConf {
+    int32 id = 1; // 此id与应用id相关联
+    string opterate = 2;
+    string desc = 3;
+    int32 conf_id = 4;
+    string jump_url = 5;
+    int32 sort = 6;
+}
+
+// 应用市场列表
+message Application {
+    int32 id = 1;
+    string app_name = 2;
+    string desc = 3;
+    string app_type = 4;
+}
+
+// 应用详情,包含个版本信息
+message ApplicationDetailReply {
+    int32 id = 1;
+    string app_name = 2;
+    string desc = 3;
+    string app_type = 4;
+
+    repeated ApplicationVersion versions = 5;
+}
+
+// 版本信息
+message ApplicationVersion {
+    int32 id = 1;
+    string version = 2;    
+    string package_path = 3;
+    google.protobuf.Timestamp create_time = 4;
+}

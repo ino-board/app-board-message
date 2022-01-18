@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+option go_package = "./message";
+
+package message;
+
+message Page {
+    int32 index = 1;
+    int32 size = 2;
+}
+
+message ListReply {
+    int32 count = 1;
+    repeated google.protobuf.Any data = 2;
+}
+
+message ResultReply {
+    string code = 1;
+    string msg = 2;
+    google.protobuf.Any data = 3;    
+}
