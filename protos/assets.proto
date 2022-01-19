@@ -21,35 +21,71 @@ service AssetsService {
     // 查询资产历史配置文件列表
     rpc GetAssetsConfList (AssetsRequest) returns (ListReply) {}
     // 应用选中配置文件
-    rpc UseCurrConfForAssets (AssetsRequest) returns (ResultReply) {}
+    rpc UseCurrConfForAssets (AssetsOptRequest) returns (ResultReply) {}
     
+    // 获取资产类别对应配置信息
+    rpc GetOptDetailForAssets (AssetsOptRequest) returns (AppConfTmlpReply) {}
+
     // 应用相关
     rpc GetAppList (ApplicationRequest) returns (ListReply) {}
+    rpc GetAppInitConf (ApplicationRequest) returns (AppConfTmlpReply) {}
     rpc GetAppDetail (ApplicationRequest) returns (ApplicationDetailReply) {}
 }
 
-message ApplicationRequest {
-    Page page = 1;
-    
+message ApplicationRequest {    
+    Page page = 1;    
     int32 app_id = 2;
-    int32 app_type = 3;
+    string app_type = 3;
+    string conf_content = 4;
+    string version = 5;
+    int32 uid = 6;
 }
 
 // 通用资产请求参数
 message AssetsRequest {
     // 用户信息段
-    string uid = 1;
+    int32 uid = 1;
     string account = 2;
     
     // 资产操作相关参数
     string assets_id = 3;
     string assets_type = 4;
-    int32 application_id = 5;
+    int32 appid = 5;
     string opt_type = 6;
     // map<string,string> opt_conf = 7;
     string opt_conf = 7;
+    string status = 9;
 
     Page page = 8;
+}
+
+message AssetsOptRequest {
+    int32 conf_tmlp_id = 1;
+    string opt_type = 2;
+    string assets_id = 3;
+    string node = 4;
+    int32 appid = 5;
+
+    // 回滚操作参数
+    string conf_id = 6;
+    string version = 7;
+}
+
+// 当前资源配置信息 + 配置模板信息
+// message OpterateConfReply {
+
+// }
+
+// 配置模板信息
+message AppConfTmlpReply {
+    int32 id = 1;
+    int32 appid = 2;
+    string version = 3;
+    string title = 4;
+    string desc = 5;
+    string tmpl_type = 6;
+    string templet = 7;
+    string view_templet = 8;
 }
 
 // 资产信息汇总面板,展示每种资源持有量
