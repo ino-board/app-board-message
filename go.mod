@@ -1,4 +1,4 @@
-module message
+module github.com/ino-board/app-board-message
 
 go 1.16
 
