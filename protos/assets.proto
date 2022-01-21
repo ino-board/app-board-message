@@ -8,28 +8,32 @@ option go_package = "./message";
 package message;
 
 service AssetsService {
+    // ----------------资产管理-----------------
     // 资产汇总面板
     rpc GetAssetsOverview (AssetsRequest) returns (AssetsOverviewReply) {}
-    // 查询资产列表
-    rpc GetAssetsList (AssetsRequest) returns (ListReply) {}    
+    // 查询资产列表，附带查询可操作信息
+    rpc GetAssetsList (AssetsRequest) returns (ListReply) {}
     // 查询资产详情
-    rpc GetAssetsDetail (AssetsRequest) returns (AssetsDetailReply) {}    
+    rpc GetAssetsDetail (AssetsRequest) returns (AssetsDetailReply) {}
     // 拉取应用信息,创建资产
     rpc CreateAssets (AssetsRequest) returns (ResultReply) {}
     // 操作资产
-    rpc OpterateAssets (AssetsRequest) returns (ResultReply) {}     
+    rpc OpterateAssets (AssetsRequest) returns (ResultReply) {}    
     // 查询资产历史配置文件列表
-    rpc GetAssetsConfList (AssetsRequest) returns (ListReply) {}
+    rpc GetAssetsConfList (AssetsRequest) returns (ListReply) {} 
     // 应用选中配置文件
-    rpc UseCurrConfForAssets (AssetsOptRequest) returns (ResultReply) {}
-    
+    rpc ApplyAssetsConf (AssetsOptRequest) returns (ResultReply) {}
     // 获取资产类别对应配置信息
     rpc GetOptDetailForAssets (AssetsOptRequest) returns (AppConfTmlpReply) {}
 
-    // 应用相关
+    // ----------------应用管理-----------------
+    // 查询可创建应用列表
     rpc GetAppList (ApplicationRequest) returns (ListReply) {}
-    rpc GetAppInitConf (ApplicationRequest) returns (AppConfTmlpReply) {}
+    // 查询详细操作模板信息
+    rpc GetAppConf (ApplicationRequest) returns (AppConfTmlpReply) {}
+    // 查询应用信息，包含版本信息列表
     rpc GetAppDetail (ApplicationRequest) returns (ApplicationDetailReply) {}
+
 }
 
 message ApplicationRequest {    

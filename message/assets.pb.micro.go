@@ -43,9 +43,10 @@ func NewAssetsServiceEndpoints() []*api.Endpoint {
 // Client API for AssetsService service
 
 type AssetsService interface {
+	// ----------------资产管理-----------------
 	// 资产汇总面板
 	GetAssetsOverview(ctx context.Context, in *AssetsRequest, opts ...client.CallOption) (*AssetsOverviewReply, error)
-	// 查询资产列表
+	// 查询资产列表，附带查询可操作信息
 	GetAssetsList(ctx context.Context, in *AssetsRequest, opts ...client.CallOption) (*ListReply, error)
 	// 查询资产详情
 	GetAssetsDetail(ctx context.Context, in *AssetsRequest, opts ...client.CallOption) (*AssetsDetailReply, error)
@@ -56,9 +57,15 @@ type AssetsService interface {
 	// 查询资产历史配置文件列表
 	GetAssetsConfList(ctx context.Context, in *AssetsRequest, opts ...client.CallOption) (*ListReply, error)
 	// 应用选中配置文件
-	UseCurrConfForAssets(ctx context.Context, in *AssetsRequest, opts ...client.CallOption) (*ResultReply, error)
-	// 应用相关
+	ApplyAssetsConf(ctx context.Context, in *AssetsOptRequest, opts ...client.CallOption) (*ResultReply, error)
+	// 获取资产类别对应配置信息
+	GetOptDetailForAssets(ctx context.Context, in *AssetsOptRequest, opts ...client.CallOption) (*AppConfTmlpReply, error)
+	// ----------------应用管理-----------------
+	// 查询可创建应用列表
 	GetAppList(ctx context.Context, in *ApplicationRequest, opts ...client.CallOption) (*ListReply, error)
+	// 查询详细操作模板信息
+	GetAppConf(ctx context.Context, in *ApplicationRequest, opts ...client.CallOption) (*AppConfTmlpReply, error)
+	// 查询应用信息，包含版本信息列表
 	GetAppDetail(ctx context.Context, in *ApplicationRequest, opts ...client.CallOption) (*ApplicationDetailReply, error)
 }
 
@@ -134,9 +141,19 @@ func (c *assetsService) GetAssetsConfList(ctx context.Context, in *AssetsRequest
 	return out, nil
 }
 
-func (c *assetsService) UseCurrConfForAssets(ctx context.Context, in *AssetsRequest, opts ...client.CallOption) (*ResultReply, error) {
-	req := c.c.NewRequest(c.name, "AssetsService.UseCurrConfForAssets", in)
+func (c *assetsService) ApplyAssetsConf(ctx context.Context, in *AssetsOptRequest, opts ...client.CallOption) (*ResultReply, error) {
+	req := c.c.NewRequest(c.name, "AssetsService.ApplyAssetsConf", in)
 	out := new(ResultReply)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetsService) GetOptDetailForAssets(ctx context.Context, in *AssetsOptRequest, opts ...client.CallOption) (*AppConfTmlpReply, error) {
+	req := c.c.NewRequest(c.name, "AssetsService.GetOptDetailForAssets", in)
+	out := new(AppConfTmlpReply)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -147,6 +164,16 @@ func (c *assetsService) UseCurrConfForAssets(ctx context.Context, in *AssetsRequ
 func (c *assetsService) GetAppList(ctx context.Context, in *ApplicationRequest, opts ...client.CallOption) (*ListReply, error) {
 	req := c.c.NewRequest(c.name, "AssetsService.GetAppList", in)
 	out := new(ListReply)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetsService) GetAppConf(ctx context.Context, in *ApplicationRequest, opts ...client.CallOption) (*AppConfTmlpReply, error) {
+	req := c.c.NewRequest(c.name, "AssetsService.GetAppConf", in)
+	out := new(AppConfTmlpReply)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -167,9 +194,10 @@ func (c *assetsService) GetAppDetail(ctx context.Context, in *ApplicationRequest
 // Server API for AssetsService service
 
 type AssetsServiceHandler interface {
+	// ----------------资产管理-----------------
 	// 资产汇总面板
 	GetAssetsOverview(context.Context, *AssetsRequest, *AssetsOverviewReply) error
-	// 查询资产列表
+	// 查询资产列表，附带查询可操作信息
 	GetAssetsList(context.Context, *AssetsRequest, *ListReply) error
 	// 查询资产详情
 	GetAssetsDetail(context.Context, *AssetsRequest, *AssetsDetailReply) error
@@ -180,9 +208,15 @@ type AssetsServiceHandler interface {
 	// 查询资产历史配置文件列表
 	GetAssetsConfList(context.Context, *AssetsRequest, *ListReply) error
 	// 应用选中配置文件
-	UseCurrConfForAssets(context.Context, *AssetsRequest, *ResultReply) error
-	// 应用相关
+	ApplyAssetsConf(context.Context, *AssetsOptRequest, *ResultReply) error
+	// 获取资产类别对应配置信息
+	GetOptDetailForAssets(context.Context, *AssetsOptRequest, *AppConfTmlpReply) error
+	// ----------------应用管理-----------------
+	// 查询可创建应用列表
 	GetAppList(context.Context, *ApplicationRequest, *ListReply) error
+	// 查询详细操作模板信息
+	GetAppConf(context.Context, *ApplicationRequest, *AppConfTmlpReply) error
+	// 查询应用信息，包含版本信息列表
 	GetAppDetail(context.Context, *ApplicationRequest, *ApplicationDetailReply) error
 }
 
@@ -194,8 +228,10 @@ func RegisterAssetsServiceHandler(s server.Server, hdlr AssetsServiceHandler, op
 		CreateAssets(ctx context.Context, in *AssetsRequest, out *ResultReply) error
 		OpterateAssets(ctx context.Context, in *AssetsRequest, out *ResultReply) error
 		GetAssetsConfList(ctx context.Context, in *AssetsRequest, out *ListReply) error
-		UseCurrConfForAssets(ctx context.Context, in *AssetsRequest, out *ResultReply) error
+		ApplyAssetsConf(ctx context.Context, in *AssetsOptRequest, out *ResultReply) error
+		GetOptDetailForAssets(ctx context.Context, in *AssetsOptRequest, out *AppConfTmlpReply) error
 		GetAppList(ctx context.Context, in *ApplicationRequest, out *ListReply) error
+		GetAppConf(ctx context.Context, in *ApplicationRequest, out *AppConfTmlpReply) error
 		GetAppDetail(ctx context.Context, in *ApplicationRequest, out *ApplicationDetailReply) error
 	}
 	type AssetsService struct {
@@ -233,12 +269,20 @@ func (h *assetsServiceHandler) GetAssetsConfList(ctx context.Context, in *Assets
 	return h.AssetsServiceHandler.GetAssetsConfList(ctx, in, out)
 }
 
-func (h *assetsServiceHandler) UseCurrConfForAssets(ctx context.Context, in *AssetsRequest, out *ResultReply) error {
-	return h.AssetsServiceHandler.UseCurrConfForAssets(ctx, in, out)
+func (h *assetsServiceHandler) ApplyAssetsConf(ctx context.Context, in *AssetsOptRequest, out *ResultReply) error {
+	return h.AssetsServiceHandler.ApplyAssetsConf(ctx, in, out)
+}
+
+func (h *assetsServiceHandler) GetOptDetailForAssets(ctx context.Context, in *AssetsOptRequest, out *AppConfTmlpReply) error {
+	return h.AssetsServiceHandler.GetOptDetailForAssets(ctx, in, out)
 }
 
 func (h *assetsServiceHandler) GetAppList(ctx context.Context, in *ApplicationRequest, out *ListReply) error {
 	return h.AssetsServiceHandler.GetAppList(ctx, in, out)
+}
+
+func (h *assetsServiceHandler) GetAppConf(ctx context.Context, in *ApplicationRequest, out *AppConfTmlpReply) error {
+	return h.AssetsServiceHandler.GetAppConf(ctx, in, out)
 }
 
 func (h *assetsServiceHandler) GetAppDetail(ctx context.Context, in *ApplicationRequest, out *ApplicationDetailReply) error {
